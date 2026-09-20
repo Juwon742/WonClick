@@ -1,0 +1,902 @@
+﻿<Window x:Class="WonClick.Parameter.Views.ParameterManagerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="WonClick - Parameter"
+        Width="980"
+        Height="780"
+        MinWidth="820"
+        MinHeight="620"
+        WindowStartupLocation="CenterScreen"
+        Background="#F5F6F8">
+
+    <Window.Resources>
+
+        <!-- ===================================================== -->
+        <!-- 기본 Button -->
+        <!-- ===================================================== -->
+
+        <Style x:Key="DefaultButtonStyle"
+               TargetType="Button">
+
+            <Setter Property="Height"
+                    Value="34" />
+
+            <Setter Property="Padding"
+                    Value="14,0" />
+
+            <Setter Property="Margin"
+                    Value="4,0" />
+
+            <Setter Property="Background"
+                    Value="White" />
+
+            <Setter Property="BorderBrush"
+                    Value="#C7CBD1" />
+
+            <Setter Property="BorderThickness"
+                    Value="1" />
+
+            <Setter Property="Foreground"
+                    Value="#222222" />
+
+            <Setter Property="Cursor"
+                    Value="Hand" />
+
+        </Style>
+
+
+        <!-- ===================================================== -->
+        <!-- Filter Button -->
+        <!-- ===================================================== -->
+
+        <Style x:Key="FilterButtonStyle"
+               TargetType="Button"
+               BasedOn="{StaticResource DefaultButtonStyle}">
+
+            <Setter Property="MinWidth"
+                    Value="80" />
+
+        </Style>
+
+
+        <!-- ===================================================== -->
+        <!-- Primary Button -->
+        <!-- ===================================================== -->
+
+        <Style x:Key="PrimaryButtonStyle"
+               TargetType="Button"
+               BasedOn="{StaticResource DefaultButtonStyle}">
+
+            <Setter Property="Background"
+                    Value="#2D5F9A" />
+
+            <Setter Property="Foreground"
+                    Value="White" />
+
+            <Setter Property="BorderBrush"
+                    Value="#2D5F9A" />
+
+            <Setter Property="MinWidth"
+                    Value="110" />
+
+        </Style>
+
+
+        <!-- ===================================================== -->
+        <!-- Summary Card -->
+        <!-- ===================================================== -->
+
+        <Style x:Key="SummaryCardStyle"
+               TargetType="Border">
+
+            <Setter Property="Background"
+                    Value="White" />
+
+            <Setter Property="BorderBrush"
+                    Value="#D8DCE2" />
+
+            <Setter Property="BorderThickness"
+                    Value="1" />
+
+            <Setter Property="CornerRadius"
+                    Value="4" />
+
+            <Setter Property="Padding"
+                    Value="16" />
+
+        </Style>
+
+
+        <!-- ===================================================== -->
+        <!-- Result Summary Card -->
+        <!-- ===================================================== -->
+
+        <Style x:Key="ResultSummaryCardStyle"
+               TargetType="Border">
+
+            <Setter Property="Background"
+                    Value="#FFFFFF" />
+
+            <Setter Property="BorderBrush"
+                    Value="#D8DCE2" />
+
+            <Setter Property="BorderThickness"
+                    Value="1" />
+
+            <Setter Property="CornerRadius"
+                    Value="4" />
+
+            <Setter Property="Padding"
+                    Value="12,10" />
+
+        </Style>
+
+    </Window.Resources>
+
+
+    <Grid Margin="20">
+
+        <Grid.RowDefinitions>
+
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+
+            <!-- Result -->
+            <RowDefinition Height="Auto" />
+
+            <!-- Work Status -->
+            <RowDefinition Height="Auto" />
+
+            <!-- Footer -->
+            <RowDefinition Height="Auto" />
+
+        </Grid.RowDefinitions>
+
+
+        <!-- ===================================================== -->
+        <!-- HEADER -->
+        <!-- ===================================================== -->
+
+        <Grid Grid.Row="0"
+              Margin="0,0,0,18">
+
+            <Grid.ColumnDefinitions>
+
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+
+            </Grid.ColumnDefinitions>
+
+
+            <StackPanel Grid.Column="0">
+
+                <TextBlock Text="Parameter"
+                           FontSize="26"
+                           FontWeight="SemiBold"
+                           Foreground="#202124" />
+
+                <TextBlock Text="Excel Export/Import"
+                           Margin="0,4,0,0"
+                           FontSize="13"
+                           Foreground="#73777D" />
+
+            </StackPanel>
+
+
+            <StackPanel Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center">
+
+                <TextBlock Text="RVT File"
+                           HorizontalAlignment="Right"
+                           FontSize="11"
+                           Foreground="#8A8E94" />
+
+                <TextBlock x:Name="DocumentNameTextBlock"
+                           Margin="0,3,0,0"
+                           MaxWidth="360"
+                           TextTrimming="CharacterEllipsis"
+                           HorizontalAlignment="Right"
+                           FontSize="13"
+                           FontWeight="SemiBold"
+                           Foreground="#303238" />
+
+            </StackPanel>
+
+        </Grid>
+
+
+        <!-- ===================================================== -->
+        <!-- SUMMARY -->
+        <!-- ===================================================== -->
+
+        <Grid Grid.Row="1"
+              Margin="0,0,0,16">
+
+            <Grid.ColumnDefinitions>
+
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="*" />
+
+            </Grid.ColumnDefinitions>
+
+
+            <Border Grid.Column="0"
+                    Style="{StaticResource SummaryCardStyle}">
+
+                <Grid>
+
+                    <Grid.ColumnDefinitions>
+
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+
+                    </Grid.ColumnDefinitions>
+
+
+                    <StackPanel Grid.Column="0">
+
+                        <TextBlock Text="3D View"
+                                   FontSize="12"
+                                   Foreground="#7B8087" />
+
+                        <TextBlock x:Name="ViewNameTextBlock"
+                                   Margin="0,6,0,0"
+                                   FontSize="17"
+                                   FontWeight="SemiBold"
+                                   Foreground="#25282C"
+                                   TextTrimming="CharacterEllipsis" />
+
+                    </StackPanel>
+
+
+                    <StackPanel Grid.Column="1"
+                                Margin="20,0,0,0"
+                                VerticalAlignment="Center">
+
+                        <TextBlock Text="Model Element"
+                                   HorizontalAlignment="Right"
+                                   FontSize="11"
+                                   Foreground="#7B8087" />
+
+                        <TextBlock x:Name="ElementCountTextBlock"
+                                   Margin="0,4,0,0"
+                                   HorizontalAlignment="Right"
+                                   FontSize="19"
+                                   FontWeight="SemiBold"
+                                   Foreground="#25282C" />
+
+                    </StackPanel>
+
+                </Grid>
+
+            </Border>
+
+
+            <Border Grid.Column="2"
+                    Style="{StaticResource SummaryCardStyle}">
+
+                <Grid>
+
+                    <Grid.ColumnDefinitions>
+
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+
+                    </Grid.ColumnDefinitions>
+
+
+                    <StackPanel Grid.Column="0">
+
+                        <TextBlock Text="Used Parameter"
+                                   FontSize="12"
+                                   Foreground="#7B8087" />
+
+                        <TextBlock x:Name="ParameterCountTextBlock"
+                                   Margin="0,6,0,0"
+                                   FontSize="22"
+                                   FontWeight="SemiBold"
+                                   Foreground="#25282C" />
+
+                    </StackPanel>
+
+
+                    <StackPanel Grid.Column="1"
+                                Margin="20,0,0,0"
+                                VerticalAlignment="Center">
+
+                        <TextBlock Text="Instance / Type"
+                                   HorizontalAlignment="Right"
+                                   FontSize="11"
+                                   Foreground="#7B8087" />
+
+                        <TextBlock x:Name="ScopeCountTextBlock"
+                                   Margin="0,4,0,0"
+                                   HorizontalAlignment="Right"
+                                   FontSize="15"
+                                   FontWeight="SemiBold"
+                                   Foreground="#25282C" />
+
+                    </StackPanel>
+
+                </Grid>
+
+            </Border>
+
+        </Grid>
+
+
+        <!-- ===================================================== -->
+        <!-- SEARCH -->
+        <!-- ===================================================== -->
+
+        <Grid Grid.Row="2"
+              Margin="0,0,0,12">
+
+            <Grid.ColumnDefinitions>
+
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+
+            </Grid.ColumnDefinitions>
+
+
+            <Border Grid.Column="0"
+                    Height="36"
+                    Background="White"
+                    BorderBrush="#C9CDD3"
+                    BorderThickness="1"
+                    CornerRadius="2">
+
+                <Grid>
+
+                    <Grid.ColumnDefinitions>
+
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="36" />
+
+                    </Grid.ColumnDefinitions>
+
+
+                    <TextBox x:Name="SearchTextBox"
+                             Grid.Column="0"
+                             Padding="10,0,4,0"
+                             VerticalContentAlignment="Center"
+                             FontSize="13"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             TextChanged="SearchTextBox_TextChanged" />
+
+
+                    <TextBlock x:Name="SearchPlaceholderTextBlock"
+                               Grid.Column="0"
+                               Margin="10,0,0,0"
+                               VerticalAlignment="Center"
+                               Foreground="#9A9EA5"
+                               FontSize="13"
+                               Text="Search"
+                               IsHitTestVisible="False" />
+
+
+                    <Button x:Name="SearchClearButton"
+                            Grid.Column="1"
+                            Width="28"
+                            Height="28"
+                            Margin="0,3,4,3"
+                            Padding="0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Foreground="#6F7379"
+                            FontSize="18"
+                            Cursor="Hand"
+                            Content="×"
+                            ToolTip="검색어 지우기"
+                            Visibility="Collapsed"
+                            Click="SearchClearButton_Click" />
+
+                </Grid>
+
+            </Border>
+
+
+            <StackPanel Grid.Column="1"
+                        Margin="12,0,0,0"
+                        Orientation="Horizontal">
+
+                <Button Content="Select All"
+                        Style="{StaticResource DefaultButtonStyle}"
+                        Click="SelectAllButton_Click" />
+
+                <Button Content="Clear"
+                        Style="{StaticResource DefaultButtonStyle}"
+                        Click="ClearSelectionButton_Click" />
+
+            </StackPanel>
+
+        </Grid>
+
+
+        <!-- ===================================================== -->
+        <!-- FILTER -->
+        <!-- ===================================================== -->
+
+        <Grid Grid.Row="3"
+              Margin="0,0,0,12">
+
+            <Grid.ColumnDefinitions>
+
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+
+            </Grid.ColumnDefinitions>
+
+
+            <StackPanel Grid.Column="0"
+                        Orientation="Horizontal">
+
+                <Button x:Name="AllFilterButton"
+                        Content="All"
+                        Tag="All"
+                        Style="{StaticResource FilterButtonStyle}"
+                        Margin="0,0,4,0"
+                        Click="FilterButton_Click" />
+
+                <Button Content="Text"
+                        Tag="Text"
+                        Style="{StaticResource FilterButtonStyle}"
+                        Click="FilterButton_Click" />
+
+                <Button Content="Set"
+                        Tag="Set"
+                        Style="{StaticResource FilterButtonStyle}"
+                        Click="FilterButton_Click" />
+
+                <Button Content="Construction"
+                        Tag="Construction"
+                        Style="{StaticResource FilterButtonStyle}"
+                        MinWidth="110"
+                        Click="FilterButton_Click" />
+
+                <Button Content="Dimensions"
+                        Tag="Dimensions"
+                        Style="{StaticResource FilterButtonStyle}"
+                        MinWidth="100"
+                        Click="FilterButton_Click" />
+
+                <Button Content="Other"
+                        Tag="Other"
+                        Style="{StaticResource FilterButtonStyle}"
+                        Click="FilterButton_Click" />
+
+            </StackPanel>
+
+
+            <TextBlock x:Name="SelectedCountTextBlock"
+                       Grid.Column="1"
+                       Margin="16,0,0,0"
+                       VerticalAlignment="Center"
+                       FontSize="12"
+                       Foreground="#5F6368" />
+
+        </Grid>
+
+
+        <!-- ===================================================== -->
+        <!-- PARAMETER LIST -->
+        <!-- ===================================================== -->
+
+        <Border Grid.Row="4"
+                Background="White"
+                BorderBrush="#D8DCE2"
+                BorderThickness="1">
+
+            <DataGrid x:Name="ParameterDataGrid"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      CanUserReorderColumns="False"
+                      CanUserResizeRows="False"
+                      SelectionMode="Extended"
+                      SelectionUnit="FullRow"
+                      HeadersVisibility="Column"
+                      GridLinesVisibility="Horizontal"
+                      BorderThickness="0"
+                      RowHeaderWidth="0"
+                      AlternatingRowBackground="#FAFAFB">
+
+                <DataGrid.Columns>
+
+                    <DataGridTemplateColumn Header="선택"
+                                            Width="58"
+                                            IsReadOnly="False">
+
+                        <DataGridTemplateColumn.CellTemplate>
+
+                            <DataTemplate>
+
+                                <CheckBox IsChecked="{Binding IsSelected,
+                                                            Mode=TwoWay,
+                                                            UpdateSourceTrigger=PropertyChanged}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          Checked="SelectionCheckBox_Changed"
+                                          Unchecked="SelectionCheckBox_Changed" />
+
+                            </DataTemplate>
+
+                        </DataGridTemplateColumn.CellTemplate>
+
+                    </DataGridTemplateColumn>
+
+
+                    <DataGridTextColumn Header="Parameter"
+                                        Binding="{Binding Name}"
+                                        Width="*"
+                                        IsReadOnly="True" />
+
+
+                    <DataGridTextColumn Header="Scope"
+                                        Binding="{Binding ScopeName}"
+                                        Width="100"
+                                        IsReadOnly="True" />
+
+
+                    <DataGridTextColumn Header="Group"
+                                        Binding="{Binding UiGroup}"
+                                        Width="130"
+                                        IsReadOnly="True" />
+
+
+                    <DataGridTextColumn Header="Data Type"
+                                        Binding="{Binding DataTypeName}"
+                                        Width="180"
+                                        IsReadOnly="True" />
+
+                </DataGrid.Columns>
+
+            </DataGrid>
+
+        </Border>
+
+
+        <!-- ===================================================== -->
+        <!-- RESULT PANEL -->
+        <!-- ===================================================== -->
+
+        <Border x:Name="ResultPanelBorder"
+                Grid.Row="5"
+                Margin="0,12,0,0"
+                Padding="16"
+                Background="#FFFFFF"
+                BorderBrush="#D8DCE2"
+                BorderThickness="1"
+                CornerRadius="5"
+                Visibility="Collapsed">
+
+            <Grid>
+
+                <Grid.RowDefinitions>
+
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+
+                </Grid.RowDefinitions>
+
+
+                <!-- HEADER -->
+
+                <Grid Grid.Row="0">
+
+                    <Grid.ColumnDefinitions>
+
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+
+                    </Grid.ColumnDefinitions>
+
+
+                    <StackPanel Grid.Column="0">
+
+                        <TextBlock x:Name="ResultTitleTextBlock"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="#202124"
+                                   Text="Result" />
+
+                        <TextBlock x:Name="ResultMessageTextBlock"
+                                   Margin="0,5,0,0"
+                                   FontSize="12"
+                                   Foreground="#5F6368"
+                                   TextWrapping="Wrap" />
+
+                    </StackPanel>
+
+
+                    <Button Grid.Column="1"
+                            Width="28"
+                            Height="28"
+                            Margin="12,0,0,0"
+                            Padding="0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Foreground="#6F7379"
+                            FontSize="18"
+                            Cursor="Hand"
+                            Content="×"
+                            ToolTip="결과 닫기"
+                            Click="ResultCloseButton_Click" />
+
+                </Grid>
+
+
+                <!-- SUMMARY CARDS -->
+
+                <Grid x:Name="ResultSummaryPanel"
+                      Grid.Row="1"
+                      Margin="0,14,0,0">
+
+                    <Grid.ColumnDefinitions>
+
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="*" />
+
+                    </Grid.ColumnDefinitions>
+
+
+                    <Border Grid.Column="0"
+                            Style="{StaticResource ResultSummaryCardStyle}">
+
+                        <StackPanel>
+
+                            <TextBlock x:Name="ResultCard1LabelTextBlock"
+                                       FontSize="10"
+                                       Foreground="#7B8087" />
+
+                            <TextBlock x:Name="ResultCard1ValueTextBlock"
+                                       Margin="0,4,0,0"
+                                       FontSize="17"
+                                       FontWeight="SemiBold"
+                                       Foreground="#25282C" />
+
+                        </StackPanel>
+
+                    </Border>
+
+
+                    <Border Grid.Column="2"
+                            Style="{StaticResource ResultSummaryCardStyle}">
+
+                        <StackPanel>
+
+                            <TextBlock x:Name="ResultCard2LabelTextBlock"
+                                       FontSize="10"
+                                       Foreground="#7B8087" />
+
+                            <TextBlock x:Name="ResultCard2ValueTextBlock"
+                                       Margin="0,4,0,0"
+                                       FontSize="17"
+                                       FontWeight="SemiBold"
+                                       Foreground="#25282C" />
+
+                        </StackPanel>
+
+                    </Border>
+
+
+                    <Border Grid.Column="4"
+                            Style="{StaticResource ResultSummaryCardStyle}">
+
+                        <StackPanel>
+
+                            <TextBlock x:Name="ResultCard3LabelTextBlock"
+                                       FontSize="10"
+                                       Foreground="#7B8087" />
+
+                            <TextBlock x:Name="ResultCard3ValueTextBlock"
+                                       Margin="0,4,0,0"
+                                       FontSize="17"
+                                       FontWeight="SemiBold"
+                                       Foreground="#25282C" />
+
+                        </StackPanel>
+
+                    </Border>
+
+
+                    <Border Grid.Column="6"
+                            Style="{StaticResource ResultSummaryCardStyle}">
+
+                        <StackPanel>
+
+                            <TextBlock x:Name="ResultCard4LabelTextBlock"
+                                       FontSize="10"
+                                       Foreground="#7B8087" />
+
+                            <TextBlock x:Name="ResultCard4ValueTextBlock"
+                                       Margin="0,4,0,0"
+                                       FontSize="17"
+                                       FontWeight="SemiBold"
+                                       Foreground="#25282C" />
+
+                        </StackPanel>
+
+                    </Border>
+
+                </Grid>
+
+
+                <!-- DETAIL -->
+
+                <TextBlock x:Name="ResultDetailTextBlock"
+                           Grid.Row="2"
+                           Margin="0,12,0,0"
+                           FontSize="11"
+                           Foreground="#5F6368"
+                           TextWrapping="Wrap" />
+
+
+                <!-- FILE -->
+
+                <Border x:Name="ResultFilePanel"
+                        Grid.Row="3"
+                        Margin="0,12,0,0"
+                        Padding="12,10"
+                        Background="#FFFFFF"
+                        BorderBrush="#D8DCE2"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Visibility="Collapsed">
+
+                    <StackPanel>
+
+                        <TextBlock Text="File"
+                                   FontSize="10"
+                                   Foreground="#7B8087" />
+
+                        <TextBlock x:Name="ResultFileNameTextBlock"
+                                   Margin="0,4,0,0"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="#303238"
+                                   TextWrapping="Wrap" />
+
+                        <TextBlock x:Name="ResultFilePathTextBlock"
+                                   Margin="0,3,0,0"
+                                   FontSize="10"
+                                   Foreground="#7B8087"
+                                   TextWrapping="Wrap" />
+
+                    </StackPanel>
+
+                </Border>
+
+            </Grid>
+
+        </Border>
+
+
+        <!-- ===================================================== -->
+        <!-- WORK STATUS -->
+        <!-- ===================================================== -->
+
+        <Grid Grid.Row="6"
+              Margin="0,12,0,12">
+
+            <Grid.RowDefinitions>
+
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+
+            </Grid.RowDefinitions>
+
+
+            <Grid Grid.Row="0">
+
+                <Grid.ColumnDefinitions>
+
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+
+                </Grid.ColumnDefinitions>
+
+
+                <TextBlock x:Name="WorkStatusTextBlock"
+                           Grid.Column="0"
+                           Text="Ready"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           Foreground="#44474C" />
+
+
+                <TextBlock x:Name="WorkDetailTextBlock"
+                           Grid.Column="1"
+                           Text=""
+                           MaxWidth="620"
+                           TextTrimming="CharacterEllipsis"
+                           FontSize="11"
+                           Foreground="#7B8087" />
+
+            </Grid>
+
+
+            <ProgressBar x:Name="WorkProgressBar"
+                         Grid.Row="1"
+                         Height="6"
+                         Margin="0,6,0,0"
+                         Minimum="0"
+                         Maximum="100"
+                         Value="0" />
+
+
+            <TextBlock x:Name="FilterCountTextBlock"
+                       Grid.Row="2"
+                       Margin="0,7,0,0"
+                       FontSize="11"
+                       Foreground="#7B8087" />
+
+        </Grid>
+
+
+        <!-- ===================================================== -->
+        <!-- FOOTER -->
+        <!-- ===================================================== -->
+
+        <Grid Grid.Row="7">
+
+            <Grid.ColumnDefinitions>
+
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+
+            </Grid.ColumnDefinitions>
+
+
+            <TextBlock Grid.Column="0"
+                       VerticalAlignment="Center"
+                       FontSize="11"
+                       Foreground="#8A8E94"
+                       Text="현재 3D View에서 사용 중인 Parameter" />
+
+
+            <StackPanel Grid.Column="1"
+                        Orientation="Horizontal">
+
+                <Button x:Name="ExportButton"
+                        Content="Excel Export"
+                        IsEnabled="False"
+                        Style="{StaticResource PrimaryButtonStyle}" />
+
+                <Button x:Name="ImportButton"
+                        Content="Excel Import"
+                        IsEnabled="False"
+                        Style="{StaticResource DefaultButtonStyle}"
+                        MinWidth="110" />
+
+                <Button Content="닫기"
+                        Style="{StaticResource DefaultButtonStyle}"
+                        MinWidth="80"
+                        Click="CloseButton_Click" />
+
+            </StackPanel>
+
+        </Grid>
+
+    </Grid>
+
+</Window>

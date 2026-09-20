@@ -1,0 +1,121 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+
+		<!-- Revit 2025 / WPF -->
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+
+		<!-- C# -->
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+
+		<!-- Revit 2025는 64-bit -->
+		<PlatformTarget>x64</PlatformTarget>
+		<Platforms>x64</Platforms>
+
+		<!-- NuGet 의존 DLL도 Output 폴더로 복사 -->
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+
+		<!-- Add-in 기본 정보 -->
+		<AssemblyName>WonClick</AssemblyName>
+		<RootNamespace>WonClick</RootNamespace>
+
+		<Product>WonClick</Product>
+		<Description>WonClick Add-in for Autodesk Revit 2025</Description>
+
+		<!-- Version -->
+		<Version>1.0.0</Version>
+		<FileVersion>1.0.0.0</FileVersion>
+		<AssemblyVersion>1.0.0.0</AssemblyVersion>
+
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="Resources\Icons\AutoParameter16.png" />
+	  <None Remove="Resources\Icons\AutoParameter32.png" />
+	  <None Remove="Resources\Icons\Parameter16.png" />
+	  <None Remove="Resources\Icons\Parameter32.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="Resources\Icons\AutoParameter16.png" />
+	  <EmbeddedResource Include="Resources\Icons\AutoParameter32.png" />
+	  <EmbeddedResource Include="Resources\Icons\Parameter16.png" />
+	  <EmbeddedResource Include="Resources\Icons\Parameter32.png" />
+	</ItemGroup>
+
+
+	<!-- Windows Desktop Framework -->
+	<ItemGroup>
+
+		<FrameworkReference Include="Microsoft.WindowsDesktop.App" />
+
+	</ItemGroup>
+
+
+	<!-- Autodesk Revit 2025 API -->
+	<ItemGroup>
+
+		<Reference Include="RevitAPI">
+			<HintPath>C:\Program Files\Autodesk\Revit 2025\RevitAPI.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+
+		<Reference Include="RevitAPIUI">
+			<HintPath>C:\Program Files\Autodesk\Revit 2025\RevitAPIUI.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+
+	</ItemGroup>
+
+
+	<!-- Excel -->
+	<ItemGroup>
+
+		<PackageReference Include="ClosedXML" Version="0.105.1" />
+
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Core\" />
+	  <Folder Include="Licensing\" />
+	  <Folder Include="Update\" />
+	</ItemGroup>
+
+
+	<!-- Revit Add-in 자동 배포 -->
+	<Target Name="DeployWonClickToRevit" AfterTargets="Build">
+
+		<PropertyGroup>
+
+			<RevitAddinDeployDirectory>
+				$(APPDATA)\Autodesk\Revit\Addins\2025\WonClick\
+			</RevitAddinDeployDirectory>
+
+		</PropertyGroup>
+
+
+		<!--
+      Output 폴더의 DLL을 배포하되,
+      Autodesk Revit API DLL은 배포하지 않는다.
+    -->
+		<ItemGroup>
+
+			<WonClickDeployDll Include="$(TargetDir)*.dll" />
+
+			<WonClickDeployDll Remove="$(TargetDir)RevitAPI.dll" />
+			<WonClickDeployDll Remove="$(TargetDir)RevitAPIUI.dll" />
+
+		</ItemGroup>
+
+
+		<!-- 배포 폴더가 없으면 자동 생성 -->
+		<MakeDir Directories="$(RevitAddinDeployDirectory)" />
+
+
+		<!-- 변경된 DLL만 복사 -->
+		<Copy SourceFiles="@(WonClickDeployDll)" DestinationFolder="$(RevitAddinDeployDirectory)" SkipUnchangedFiles="true" />
+
+	</Target>
+
+</Project>
