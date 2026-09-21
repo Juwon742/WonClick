@@ -153,6 +153,49 @@ namespace WonClick.AutoParameter.Services
             }
 
 
+            // =====================================================
+            // WonClick SK Sync Transaction 제외
+            //
+            // SK Sync는 기존 Parameter Value만 변경하고
+            // Parameter Definition / Binding / Type 구조는
+            // 변경하지 않는다.
+            //
+            // 따라서 SK All / SK View / SK Select 실행으로
+            // 수만 개 Element가 Modified 되어도
+            // AutoParameter Catalog Cache 검사는 생략한다.
+            // =====================================================
+
+            try
+            {
+                ICollection<string> transactionNames =
+                    e.GetTransactionNames();
+
+
+                foreach (string transactionName
+                         in transactionNames)
+                {
+                    if (string.IsNullOrWhiteSpace(
+                            transactionName))
+                    {
+                        continue;
+                    }
+
+
+                    if (transactionName.StartsWith(
+                            "WonClick - SK Sync",
+                            StringComparison.Ordinal))
+                    {
+                        return;
+                    }
+                }
+            }
+            catch
+            {
+                // Transaction 이름 조회에 실패한 경우에는
+                // 기존 DocumentChanged Logic을 그대로 진행한다.
+            }
+
+
             Document doc;
 
 
@@ -557,7 +600,7 @@ namespace WonClick.AutoParameter.Services
 
 
                     // =============================================
-                    // Text / Set Group만
+                    // Text / Set Group + Identity Data > Comments만
                     // =============================================
 
                     if (!IsTargetParameterGroup(
@@ -792,6 +835,7 @@ namespace WonClick.AutoParameter.Services
         //
         // Text
         // Set
+        // Identity Data > Comments
         //
         // Group 판정 결과 Cache 적용
         // =========================================================
@@ -809,6 +853,20 @@ namespace WonClick.AutoParameter.Services
                 if (definition == null)
                 {
                     return false;
+                }
+
+
+                // =================================================
+                // Identity Data > Comments 예외 허용
+                //
+                // Identity Data 그룹 전체를 허용하는 것이 아니라
+                // Revit 기본 Instance Comments만 허용한다.
+                // =================================================
+
+                if (IsIdentityDataCommentsParameter(
+                        parameter))
+                {
+                    return true;
                 }
 
 
@@ -881,6 +939,78 @@ namespace WonClick.AutoParameter.Services
 
                 return
                     result;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+
+        // =========================================================
+        // Identity Data > Comments 확인
+        //
+        // 우선 Revit Built-in Parameter ID로 확인하고,
+        // 예외적인 환경을 대비해
+        // Identity Data Group + Name = Comments도 Fallback으로 확인한다.
+        //
+        // Type Comments가 아니라 Instance Comments만 대상이다.
+        // =========================================================
+
+        private static bool IsIdentityDataCommentsParameter(
+            RevitParameter parameter)
+        {
+            if (parameter == null)
+            {
+                return false;
+            }
+
+
+            try
+            {
+                // =================================================
+                // 가장 확실한 판정:
+                // BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS
+                // =================================================
+
+                if (parameter.Id.Value ==
+                    (long)BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)
+                {
+                    return true;
+                }
+
+
+                Definition? definition =
+                    parameter.Definition;
+
+
+                if (definition == null)
+                {
+                    return false;
+                }
+
+
+                ForgeTypeId groupTypeId =
+                    definition.GetGroupTypeId();
+
+
+                if (groupTypeId !=
+                    GroupTypeId.IdentityData)
+                {
+                    return false;
+                }
+
+
+                string parameterName =
+                    definition.Name
+                    ?? string.Empty;
+
+
+                return
+                    string.Equals(
+                        parameterName,
+                        "Comments",
+                        StringComparison.OrdinalIgnoreCase);
             }
             catch
             {

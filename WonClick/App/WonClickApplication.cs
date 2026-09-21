@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Media.Imaging;
 using WonClick.AutoParameter.Services;
+using WonClick.TypeNameParameter.Services;
 
 namespace WonClick.App
 {
@@ -24,12 +25,31 @@ namespace WonClick.App
 
 
                 // =================================================
+                // SK Auto Sync Engine 초기화
+                // =================================================
+
+                TypeNameParameterAutoSyncEngine.Initialize(
+                    application.ActiveAddInId);
+
+
+                // =================================================
+                // Document Events
+                // =================================================
+
+                application
+                    .ControlledApplication
+                    .DocumentOpened +=
+                        ControlledApplication_DocumentOpened;
+
+
+                application
+                    .ControlledApplication
+                    .DocumentCreated +=
+                        ControlledApplication_DocumentCreated;
+
+
+                // =================================================
                 // Auto Parameter Catalog Cache 감시
-                //
-                // DocumentChanged는 읽기 전용으로만 사용.
-                //
-                // Parameter Catalog 구조에 변화가 있는지를
-                // 판단해서 Cache Dirty 여부만 관리한다.
                 // =================================================
 
                 application
@@ -50,10 +70,6 @@ namespace WonClick.App
                     "Model";
 
 
-                // =================================================
-                // Ribbon Tab
-                // =================================================
-
                 try
                 {
                     application.CreateRibbonTab(
@@ -61,13 +77,9 @@ namespace WonClick.App
                 }
                 catch
                 {
-                    // 이미 존재하면 그대로 사용
+                    // 이미 존재
                 }
 
-
-                // =================================================
-                // Model Panel
-                // =================================================
 
                 RibbonPanel? modelPanel =
                     null;
@@ -98,10 +110,6 @@ namespace WonClick.App
                 }
 
 
-                // =================================================
-                // Assembly
-                // =================================================
-
                 string assemblyPath =
                     Assembly
                         .GetExecutingAssembly()
@@ -110,8 +118,6 @@ namespace WonClick.App
 
                 // =================================================
                 // Parameter
-                //
-                // Excel Export / Import
                 // =================================================
 
                 PushButtonData parameterButtonData =
@@ -134,18 +140,10 @@ namespace WonClick.App
                         "현재 3D View의 Parameter를 관리합니다.";
 
 
-                    // =============================================
-                    // Parameter 16 x 16 Icon
-                    // =============================================
-
                     parameterButton.Image =
                         LoadEmbeddedImage(
                             "WonClick.Resources.Icons.Parameter16.png");
 
-
-                    // =============================================
-                    // Parameter 32 x 32 Icon
-                    // =============================================
 
                     parameterButton.LargeImage =
                         LoadEmbeddedImage(
@@ -155,9 +153,6 @@ namespace WonClick.App
 
                 // =================================================
                 // Auto Parameter
-                //
-                // 새로 생성되는 객체의 Parameter에
-                // 지정된 Value 자동 입력
                 // =================================================
 
                 PushButtonData autoParameterButtonData =
@@ -182,22 +177,58 @@ namespace WonClick.App
                         "지정한 Value를 자동으로 입력합니다.";
 
 
-                    // =============================================
-                    // Auto Parameter 16 x 16 Icon
-                    // =============================================
-
                     autoParameterButton.Image =
                         LoadEmbeddedImage(
                             "WonClick.Resources.Icons.AutoParameter16.png");
 
 
-                    // =============================================
-                    // Auto Parameter 32 x 32 Icon
-                    // =============================================
-
                     autoParameterButton.LargeImage =
                         LoadEmbeddedImage(
                             "WonClick.Resources.Icons.AutoParameter32.png");
+                }
+
+
+                // =================================================
+                // SK Manager
+                //
+                // 기존 SK All / View / Select / Auto / View Fill을
+                // Ribbon에서 직접 노출하지 않고
+                // 안전한 단일 Manager UI 안으로 통합한다.
+                // =================================================
+
+                modelPanel.AddSeparator();
+
+
+                PushButtonData skManagerButtonData =
+                    new PushButtonData(
+                        "WonClick.SKManager",
+                        "SK\nManager",
+                        assemblyPath,
+                        "WonClick.TypeNameParameter.Commands.SKManagerCommand");
+
+
+                PushButton? skManagerButton =
+                    modelPanel.AddItem(
+                        skManagerButtonData)
+                    as PushButton;
+
+
+                if (skManagerButton != null)
+                {
+                    skManagerButton.ToolTip =
+                        "SK Auto Sync, Selected/View/All Sync, "
+                        +
+                        "View Fill을 하나의 안전한 UI에서 관리합니다.";
+
+
+                    skManagerButton.Image =
+                        LoadEmbeddedImage(
+                            "WonClick.Resources.Icons.AutoFill16.png");
+
+
+                    skManagerButton.LargeImage =
+                        LoadEmbeddedImage(
+                            "WonClick.Resources.Icons.AutoFill32.png");
                 }
 
 
@@ -215,6 +246,46 @@ namespace WonClick.App
 
 
                 return Result.Failed;
+            }
+        }
+
+
+        // =========================================================
+        // Document Opened
+        // =========================================================
+
+        private static void ControlledApplication_DocumentOpened(
+            object? sender,
+            DocumentOpenedEventArgs e)
+        {
+            try
+            {
+                TypeNameParameterAutoSyncEngine
+                    .RegisterDocument(
+                        e.Document);
+            }
+            catch
+            {
+            }
+        }
+
+
+        // =========================================================
+        // Document Created
+        // =========================================================
+
+        private static void ControlledApplication_DocumentCreated(
+            object? sender,
+            DocumentCreatedEventArgs e)
+        {
+            try
+            {
+                TypeNameParameterAutoSyncEngine
+                    .RegisterDocument(
+                        e.Document);
+            }
+            catch
+            {
             }
         }
 
@@ -272,10 +343,7 @@ namespace WonClick.App
 
 
         // =========================================================
-        // Document Changed
-        //
-        // EventHandler<DocumentChangedEventArgs>의 sender는
-        // nullable object이므로 object? 사용
+        // AutoParameter Catalog
         // =========================================================
 
         private static void ControlledApplication_DocumentChanged(
@@ -290,9 +358,6 @@ namespace WonClick.App
             }
             catch
             {
-                // Catalog Cache 관련 오류가
-                // 기존 WonClick / Revit 기능에 영향을 주지 않도록
-                // 무시
             }
         }
 
@@ -304,6 +369,30 @@ namespace WonClick.App
         public Result OnShutdown(
             UIControlledApplication application)
         {
+            try
+            {
+                application
+                    .ControlledApplication
+                    .DocumentOpened -=
+                        ControlledApplication_DocumentOpened;
+            }
+            catch
+            {
+            }
+
+
+            try
+            {
+                application
+                    .ControlledApplication
+                    .DocumentCreated -=
+                        ControlledApplication_DocumentCreated;
+            }
+            catch
+            {
+            }
+
+
             try
             {
                 application

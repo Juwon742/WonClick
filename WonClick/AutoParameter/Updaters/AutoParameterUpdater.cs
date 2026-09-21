@@ -68,7 +68,7 @@ namespace WonClick.AutoParameter.Updaters
             return
                 "Automatically fills writable Instance Parameters "
                 +
-                "in the Text and Set parameter groups.";
+                "in the Text / Set groups and Identity Data > Comments.";
         }
 
 
@@ -179,7 +179,11 @@ namespace WonClick.AutoParameter.Updaters
 
 
                         // =========================================
-                        // Text / Set Group만 허용
+                        // 허용 범위
+                        //
+                        // Text
+                        // Set
+                        // Identity Data > Comments
                         // =========================================
 
                         if (!IsTargetParameterGroup(
@@ -330,9 +334,15 @@ namespace WonClick.AutoParameter.Updaters
 
 
         // =========================================================
-        // Parameter Group 확인
+        // Parameter 허용 범위 확인
         //
+        // 기존:
         // Text / Set
+        //
+        // 추가:
+        // Identity Data > Comments
+        //
+        // Identity Data 전체를 허용하지 않는다.
         // =========================================================
 
         private static bool IsTargetParameterGroup(
@@ -347,6 +357,17 @@ namespace WonClick.AutoParameter.Updaters
                 if (definition == null)
                 {
                     return false;
+                }
+
+
+                // =================================================
+                // Identity Data > Comments 예외 허용
+                // =================================================
+
+                if (IsIdentityDataCommentsParameter(
+                        parameter))
+                {
+                    return true;
                 }
 
 
@@ -394,6 +415,81 @@ namespace WonClick.AutoParameter.Updaters
 
 
                 return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+
+        // =========================================================
+        // Identity Data > Comments 확인
+        //
+        // Revit 기본 Instance Comments:
+        // BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS
+        //
+        // Type Comments는 허용하지 않는다.
+        // =========================================================
+
+        private static bool IsIdentityDataCommentsParameter(
+            RevitParameter parameter)
+        {
+            if (parameter == null)
+            {
+                return false;
+            }
+
+
+            try
+            {
+                // =================================================
+                // Built-in ID 우선
+                // =================================================
+
+                if (parameter.Id.Value ==
+                    (long)BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)
+                {
+                    return true;
+                }
+
+
+                // =================================================
+                // Fallback:
+                // Identity Data + Comments
+                // =================================================
+
+                Definition? definition =
+                    parameter.Definition;
+
+
+                if (definition == null)
+                {
+                    return false;
+                }
+
+
+                ForgeTypeId groupTypeId =
+                    definition.GetGroupTypeId();
+
+
+                if (groupTypeId !=
+                    GroupTypeId.IdentityData)
+                {
+                    return false;
+                }
+
+
+                string parameterName =
+                    definition.Name
+                    ?? string.Empty;
+
+
+                return
+                    string.Equals(
+                        parameterName,
+                        "Comments",
+                        StringComparison.OrdinalIgnoreCase);
             }
             catch
             {

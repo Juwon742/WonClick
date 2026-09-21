@@ -32,17 +32,21 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="Resources\Icons\AutoParameter16.png" />
-	  <None Remove="Resources\Icons\AutoParameter32.png" />
-	  <None Remove="Resources\Icons\Parameter16.png" />
-	  <None Remove="Resources\Icons\Parameter32.png" />
+		<None Remove="Resources\Icons\AutoFill16.png" />
+		<None Remove="Resources\Icons\AutoFill32.png" />
+		<None Remove="Resources\Icons\AutoParameter16.png" />
+		<None Remove="Resources\Icons\AutoParameter32.png" />
+		<None Remove="Resources\Icons\Parameter16.png" />
+		<None Remove="Resources\Icons\Parameter32.png" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Include="Resources\Icons\AutoParameter16.png" />
-	  <EmbeddedResource Include="Resources\Icons\AutoParameter32.png" />
-	  <EmbeddedResource Include="Resources\Icons\Parameter16.png" />
-	  <EmbeddedResource Include="Resources\Icons\Parameter32.png" />
+		<EmbeddedResource Include="Resources\Icons\AutoFill16.png" />
+		<EmbeddedResource Include="Resources\Icons\AutoFill32.png" />
+		<EmbeddedResource Include="Resources\Icons\AutoParameter16.png" />
+		<EmbeddedResource Include="Resources\Icons\AutoParameter32.png" />
+		<EmbeddedResource Include="Resources\Icons\Parameter16.png" />
+		<EmbeddedResource Include="Resources\Icons\Parameter32.png" />
 	</ItemGroup>
 
 
@@ -77,9 +81,9 @@
 
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Core\" />
-	  <Folder Include="Licensing\" />
-	  <Folder Include="Update\" />
+		<Folder Include="Core\" />
+		<Folder Include="Licensing\" />
+		<Folder Include="Update\" />
 	</ItemGroup>
 
 
